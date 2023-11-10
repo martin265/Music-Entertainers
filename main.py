@@ -64,8 +64,16 @@ def main(page: ft.Page):
                             #  -------------------the container for the logo here----------//
                             ft.Container(
                                 margin=ft.margin.only(left=30),
-                                content=ft.Text(
-                                    "logo"
+                                content=ft.Row(
+                                    controls=[
+                                        ft.Image(
+                                            src=f"assets/icons/wave-sound.png",
+                                            height=50,
+                                            width=50,
+                                            color="white",
+                                            semantics_label="logo"
+                                        )
+                                    ]
                                 )
                             ),
                             #  ----------------------// the container for the links here-------//
@@ -77,11 +85,11 @@ def main(page: ft.Page):
                                         ft.Text(
                                             "home".title(),
                                             color="white",
-                                            size=18
+                                            size=15
                                         )
                                     ]
                                 ),
-                                on_click=lambda _: page.go('/'),
+                                on_click=lambda _: page.go('/index'),
                             ),
                             ft.Divider(),
                             #  -------------the other controls here-------//
@@ -92,7 +100,7 @@ def main(page: ft.Page):
                                         ft.Text(
                                             "profile".title(),
                                             color="white",
-                                            size=18
+                                            size=15
                                         )
                                     ]
                                 ),
@@ -107,7 +115,7 @@ def main(page: ft.Page):
                                         ft.Text(
                                             "payments".title(),
                                             color="white",
-                                            size=18
+                                            size=15
                                         ),
 
                                     ]
@@ -123,7 +131,7 @@ def main(page: ft.Page):
                                         ft.Text(
                                             "events".title(),
                                             color="white",
-                                            size=18,
+                                            size=15,
                                             style=ft.TextThemeStyle.DISPLAY_SMALL,
                                             weight=ft.FontWeight.W_100
                                         )
@@ -141,7 +149,7 @@ def main(page: ft.Page):
                                         ft.Text(
                                             "streams".title(),
                                             color="white",
-                                            size=18,
+                                            size=15,
                                             style=ft.TextThemeStyle.DISPLAY_SMALL,
                                             weight=ft.FontWeight.W_100
                                         )
@@ -159,7 +167,7 @@ def main(page: ft.Page):
                                         ft.Text(
                                             "contact".title(),
                                             color="white",
-                                            size=18,
+                                            size=15,
                                             style=ft.TextThemeStyle.DISPLAY_SMALL,
                                             weight=ft.FontWeight.W_100
                                         )
@@ -183,7 +191,7 @@ def main(page: ft.Page):
                                     controls=[
                                         ft.Icon(
                                             ft.icons.COLOR_LENS_ROUNDED,
-                                            color="#FF7451",
+                                            color="white",
                                             size=30
                                         )
                                     ]

@@ -209,8 +209,8 @@ def ContactView(page):
         try:
             #  ---------------------// the codes for sending the email notifications here-----------//
             # Gmail account details
-            sender_email = "martinsilungwe12@gmail.com"
-            sender_password = "Pa55word@900!"
+            sender_email = "zaithwazonke@gmail.com"
+            sender_password = "cihk icag tfgf zrob"
 
             # Gmail SMTP server
             smtp_server = "smtp.gmail.com"
@@ -242,7 +242,19 @@ def ContactView(page):
 
             # Quit the SMTP server
             server.quit()
-            print("Email sent successfully")
+            page.snack_bar = ft.SnackBar(
+                content=ft.Row(
+                    controls=[
+                        ft.Container(
+                            content=ft.Text(
+                                "email sent successfully".capitalize()
+                            )
+                        )
+                    ]
+                )
+            )
+            page.snack_bar.open = True
+            page.update()
 
         except Exception as e:
             print(e)

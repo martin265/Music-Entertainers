@@ -1,6 +1,6 @@
 import flet as ft
-import calendar
 import datetime
+import calendar
 
 # some constants here----------//
 CELL_SIZE = (28, 28)
@@ -8,6 +8,7 @@ CELL_BG_COLOR = "#0078D9"
 TODAY_BG_COLOR = "#E52E6A"
 
 
+#  ----------------// the custom fonts for the website will be here for the imports here----//
 # -------------building the actual calendar here---//
 class SetCalendar(ft.UserControl):
     """the class install will be used to get the 12 months of the calendar"""
@@ -30,6 +31,30 @@ class SetCalendar(ft.UserControl):
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
 
         )
+
+    #   ----------------// function to allow the pagination of the calendar here----------//
+    def calendar_pagination_func(self, delta):
+        """the function will be responsible for paginating content"""
+        try:
+            self.m1 = min(max(1, self.m1 + delta), 12)
+            self.m1 = min(max(2, self.m2 + delta), 13)
+            #  ---------------// variable for a new calendar-------------//
+            new_calendar = self.create_month_calendar(self.current_year)
+            self.calendar_grid = new_calendar
+            self.update()
+
+        except Exception as ex:
+            self.page.snack_bar = ft.SnackBar(
+                content=ft.Row(
+                    controls=[
+                        ft.Text(
+                            "something went wrong at {}".format(ex)
+                        )
+                    ]
+                )
+            )
+            self.page.snack_bar.open = True
+            self.page.update()
 
     #  ----------------// function will be trigger the hover effect---------------//
     def container_hover(self, e):
@@ -154,7 +179,7 @@ class SetCalendar(ft.UserControl):
             self.page.snack_bar.open = True
             self.page.update()
 
-    #  ---------------// 
+    #  ---------------//
 
     #  ----------// the logic for the calendar here--------//
     def create_month_calendar(self, year):
@@ -165,8 +190,9 @@ class SetCalendar(ft.UserControl):
         for month in range(self.m1, self.m2):
             month_label = ft.Text(
                 f"{calendar.month_name[month]} {self.current_year}",
-                size=14,
-                weight=ft.FontWeight.W_700
+                size=24,
+                weight=ft.FontWeight.W_700,
+                text_align=ft.alignment.center,
             )
             #  -----month matrix here--------//
             month_matrix = calendar.monthcalendar(self.current_year, month)
@@ -178,7 +204,7 @@ class SetCalendar(ft.UserControl):
                 ft.Container(
                     margin=ft.margin.only(left=35),
                     content=ft.Row(
-                        alignment=ft.MainAxisAlignment.START,
+                        alignment=ft.MainAxisAlignment.CENTER,
                         controls=[
                             month_label
                         ]
@@ -188,13 +214,15 @@ class SetCalendar(ft.UserControl):
             #  ---------// getting the weeks here for the calendar----------//
             weekday_labels = [
                 ft.Container(
-                    width=50,
-                    height=50,
+                    width=100,
+                    height=100,
                     alignment=ft.alignment.center,
+
                     content=ft.Text(
                         weekday,
-                        size=12,
-                        color="black"
+                        size=20,
+                        color="#4A148C",
+                        weight=ft.FontWeight.W_700
                     )
                 )
                 for weekday in ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
@@ -209,16 +237,16 @@ class SetCalendar(ft.UserControl):
                 for day in week:
                     if day == 0:
                         day_container = ft.Container(
-                            width=50,
-                            height=50,
+                            width=100,
+                            height=100,
                         )
                     else:
                         day_container = ft.Container(
-                            width=50,
-                            height=50,
+                            width=100,
+                            height=100,
                             ink=False,
                             # on_hover=self.container_hover,
-                            border=ft.border.all(0.3, color="#212121"),
+                            border=ft.border.all(0.3, color="#4A148C"),
                             alignment=ft.alignment.center,
                             border_radius=ft.border_radius.all(10),
                             #  ----------passing additional parameters to the container here-----//
@@ -230,8 +258,14 @@ class SetCalendar(ft.UserControl):
                             on_click=self.available_events,
                             on_long_press=lambda e: self.show_two_dates(e),
                             animate=400,
+                            # ------------// content for the boxes----------//
                         )
-                    day_label = ft.Text(str(day), size=15)
+                    day_label = ft.Text(
+                        str(day),
+                        size=24,
+                        color="black",
+                        weight=ft.FontWeight.W_700,
+                    )
                     #  ------------// making the second checks here--------//
                     if day == 0:
                         day_label = None
@@ -241,7 +275,7 @@ class SetCalendar(ft.UserControl):
                             and self.current_year == datetime.date.today().year
                     ):
                         # day_label.bgcolor = "teal700"
-                        day_container.bgcolor = "blue"
+                        day_container.bgcolor = "#4A148C"
                     day_container.content = day_label
                     week_container.controls.append(day_container)
                 #  ------------// appending controls to the container here--------------//
@@ -271,7 +305,7 @@ class DateSetUp(ft.UserControl):
         self.today = ft.Text(
             datetime.date.today().strftime("%B, %d, %Y"),
             width=260,
-            size=13,
+            size=34,
             color="white24",
             weight=ft.FontWeight.W_700
         )
@@ -307,11 +341,16 @@ class ButtonPagination(ft.UserControl):
         )
 
 
+#  ------------------// the function that will handle the calendar pagination's here----------//
+
+
 #  ---------------// the function for the calendar component for the client to select-----//
 def EventsView(page):
     calendar = SetCalendar()
+
     page.spacing = 0
     page.margin = 0
+    #  -----------------//----------------------//----------------------//------------//
 
     #  ----------------// the custom fonts for the website will be here for the imports here----//
     page.fonts = {
@@ -321,7 +360,13 @@ def EventsView(page):
         "Roboto-black": "assets/fonts/Roboto-Black.ttf",
         "Raleway-bold": "assets/fonts/static/Raleway-Bold.ttf"
     }
-    """help me God to figure this thing out please help sir"""
+    # help me God to figure this thing out please help sir"""
+    date_picker = ft.DatePicker(
+        first_date=datetime.datetime(2023, 10, 1),
+        last_date=datetime.datetime(2024, 10, 1),
+    )
+    page.overlay.append(date_picker)
+
     content = ft.ListView(
         expand=1,
         auto_scroll=True,
@@ -334,72 +379,76 @@ def EventsView(page):
                 content=ft.Column(
                     controls=[
                         ft.Container(
-                            margin=ft.margin.only(top=20),
+                            margin=ft.margin.only(top=20, bottom=10),
                             content=ft.Row(
-                                alignment=ft.MainAxisAlignment.CENTER,
+                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                                 controls=[
-                                    ft.Text(
-                                        "check your event".capitalize(),
-                                        font_family="Raleway-bold",
-                                        size=24,
-                                        color="#0050C1"
+                                    ft.Container(
+                                        margin=ft.margin.only(left=55),
+                                        content=ft.Row(
+                                            controls=[
+                                                ft.Text(
+                                                    "check your event".capitalize(),
+                                                    font_family="Raleway-bold",
+                                                    size=24,
+                                                    color="#0050C1"
+                                                ),
+                                            ]
+                                        )
                                     ),
+                                    #  -------------// the calendar for the events will be here------//
+                                    ft.Container(
+                                        margin=ft.margin.only(right=55),
+                                        content=ft.Row(
+                                            controls=[
+                                                ft.IconButton(
+                                                    bgcolor="#311B92",
+                                                    icon=ft.icons.CALENDAR_MONTH_ROUNDED,
+                                                    icon_color="white",
+                                                    on_click=lambda _:date_picker.pick_date()
+                                                )
+                                            ]
+                                        )
+                                    )
 
                                 ]
                             )
 
                         ),
+                        #  ------------// the container for the center text here----------//
                         #  ----------------// the main calendar will be down here for the system------------//
                         ft.Container(
-                            height=900,
-                            margin=ft.margin.only(bottom=90),
-                            content=ft.Container(
-                                content=ft.Column(
-                                    controls=[
-                                        ft.Row(
-                                            alignment=ft.MainAxisAlignment.CENTER,
-                                            controls=[
-                                                calendar
-                                            ]
+                            content=ft.Row(
+                                alignment=ft.MainAxisAlignment.CENTER,
+                                controls=[
+                                    #  ----------// the container to wrap the calendar here
+                                    ft.Container(
+                                        width=1200,
+                                        height=730,
+                                        bgcolor="white",
+                                        border_radius=ft.border_radius.all(10),
+                                        shadow=ft.BoxShadow(
+                                            blur_radius=9,
+                                            blur_style=ft.ShadowBlurStyle.OUTER,
+                                            color="#311B92",
                                         ),
-                                        ft.Container(
-                                            content=ft.Row(
-                                                alignment=ft.MainAxisAlignment.CENTER,
+                                        content=ft.Container(
+                                            content=ft.Column(
                                                 controls=[
-                                                    ft.ElevatedButton(
-                                                        text="previous",
-                                                        icon=ft.icons.ARROW_BACK_IOS_ROUNDED,
-                                                        icon_color="white",
-                                                        bgcolor="#0050C1",
-                                                        width=100,
-                                                        height=50,
-                                                        on_click={},
-                                                        tooltip="previous date",
-                                                        style=ft.ButtonStyle(
-                                                            animation_duration=2
-                                                        )
-                                                    ),
-                                                    #  ----------//----------------//
-                                                    ft.ElevatedButton(
-                                                        text="next",
-                                                        icon=ft.icons.NAVIGATE_NEXT_ROUNDED,
-                                                        icon_color="white",
-                                                        bgcolor="#0050C1",
-                                                        width=100,
-                                                        height=50,
-                                                        on_click={},
-                                                        tooltip="next date",
-                                                        style=ft.ButtonStyle(
-                                                            animation_duration=2
-                                                        )
+                                                    ft.Row(
+                                                        alignment=ft.MainAxisAlignment.CENTER,
+                                                        controls=[
+                                                            calendar
+                                                        ]
                                                     )
                                                 ]
                                             )
                                         )
-                                    ]
-                                )
+                                    )
+                                ]
                             )
-                        )
+                        ),
+                        #  ----------------// container for the ticket ranges----------//
                     ]
                 )
             )
