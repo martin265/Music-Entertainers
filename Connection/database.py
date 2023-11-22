@@ -9,7 +9,7 @@ try:
         database="MalawiEntertainers"
     )
     if my_connection:
-        print("connected successfully")
+        print("")
     else:
         print("failed to connect with the database")
 except Exception as ex:
@@ -32,3 +32,41 @@ def create_events_table():
         print("table created successfully".capitalize())
     except Exception as ex:
         print(ex)
+
+
+#  -----------------// function for the contact page-----------------//
+def create_contact_page_func():
+    try:
+        database_cursor = my_connection.cursor()
+        sql = ("CREATE TABLE contact("
+               "contact_id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,"
+               "first_name VARCHAR(50) NOT NULL,"
+               "last_name VARCHAR(50) NOT NULL,"
+               "email VARCHAR(50) NOT NULL,"
+               "phone_number VARCHAR(50) NOT NULL,"
+               "event_name VARCHAR(50) NOT NULL,"
+               "ordering_number VARCHAR(50) NOT NULL,"
+               "message VARCHAR(50) NOT NULL)")
+        database_cursor.execute(sql)
+        my_connection.connect()
+        print("contact table created successfully".capitalize())
+    except Exception as ex:
+        print(ex)
+
+
+#  --------------// function to save the payment details-----------//
+def create_table_payment_details():
+    try:
+        database_cursor = my_connection.cursor()
+        sql = ("CREATE TABLE payments("
+               "payment_id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,"
+               "amount VARCHAR(50) NOT NULL,"
+               "currency VARCHAR(50) NOT NULL,"
+               "source VARCHAR(50) NOT NULL,"
+               "description VARCHAR(50) NOT NULL)")
+        database_cursor.execute(sql)
+        my_connection.connect()
+        print("payment table created successfully".capitalize())
+    except Exception as ex:
+        print(ex)
+

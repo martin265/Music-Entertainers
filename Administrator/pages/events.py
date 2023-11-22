@@ -10,6 +10,7 @@ class EventsPage(ft.UserControl):
         self.page = page
         self.current_date = ft.Text()
         self.database_cursor = my_connection.cursor()
+        self.editDelete_id = ft.Text()
         #  -------------// getting input details from the users--------------//
         self.event_name = ft.TextField(
             width=550,
@@ -109,6 +110,125 @@ class EventsPage(ft.UserControl):
             ],
             rows=[]
         )
+        #  -------------------// contact table here--------------//
+        self.contact_table = ft.DataTable(
+            width=1200,
+            horizontal_margin=10,
+            sort_column_index=0,
+            height=400,
+            sort_ascending=True,
+            column_spacing=5,
+            bgcolor="white",
+            heading_text_style=ft.TextStyle(
+                size=15,
+                weight=ft.FontWeight.BOLD,
+                color="#311B92",
+            ),
+            border_radius=ft.border_radius.all(10),
+            border=ft.border.all(1, "#f5f5f5"),
+            columns=[
+                ft.DataColumn(ft.Text("first name".capitalize())),
+                ft.DataColumn(ft.Text("last name".capitalize())),
+                ft.DataColumn(ft.Text("email".capitalize())),
+                ft.DataColumn(ft.Text("phone number".capitalize())),
+                ft.DataColumn(ft.Text("event name".capitalize())),
+                ft.DataColumn(ft.Text("ordering number".capitalize())),
+                ft.DataColumn(ft.Text("message".capitalize())),
+                ft.DataColumn(ft.Text("operations".capitalize())),
+            ],
+            rows=[]
+        )
+        #  -------------------// update modal here------------//
+        self.events_update_modal = ft.AlertDialog(
+            title=ft.Text(
+                "update event".capitalize(),
+                style=ft.TextThemeStyle.HEADLINE_SMALL,
+                color="#311B92",
+            ),
+            title_padding=ft.padding.only(left=30, top=30),
+            content=ft.Container(
+                bgcolor="white",
+                width=600,
+                border_radius=ft.border_radius.all(10),
+                content=ft.Column(
+                    auto_scroll=True,
+                    scroll=ft.ScrollMode.HIDDEN,
+                    controls=[
+                        ft.Container(
+                            content=ft.Row(
+                                alignment=ft.MainAxisAlignment.CENTER,
+                                controls=[
+                                    ft.Image(
+                                        src="assets/stickers/update.png",
+                                        height=100,
+                                        width=100
+                                    )
+                                ]
+                            )
+                        ),
+                        ft.Container(
+                            content=ft.Column(
+                                controls=[
+                                    ft.Row(
+                                        alignment=ft.MainAxisAlignment.CENTER,
+                                        controls=[
+                                            self.event_name,
+                                        ]
+                                    ),
+                                    ft.Row(
+                                        alignment=ft.MainAxisAlignment.CENTER,
+                                        controls=[
+                                            self.date_time,
+                                        ]
+                                    ),
+                                    ft.Row(
+                                        alignment=ft.MainAxisAlignment.CENTER,
+                                        controls=[
+                                            self.location,
+                                        ]
+                                    ),
+                                    ft.Row(
+                                        alignment=ft.MainAxisAlignment.CENTER,
+                                        controls=[
+                                            self.description,
+                                        ]
+                                    ),
+                                    ft.Row(
+                                        alignment=ft.MainAxisAlignment.CENTER,
+                                        controls=[
+                                            self.agenda,
+                                        ]
+                                    ),
+
+                                ]
+                            )
+                        ),
+                        ft.Container(
+                            margin=ft.margin.only(left=20, bottom=10),
+                            content=ft.Row(
+                                controls=[
+                                    ft.ElevatedButton(
+                                        width=200,
+                                        height=60,
+                                        on_click=self.update_events_func,
+                                        icon_color="white",
+                                        bgcolor="#311B92",
+                                        tooltip="update event",
+                                        text="update event".capitalize(),
+                                        elevation=0,
+                                        color="white",
+                                        style=ft.ButtonStyle(
+                                            color="white",
+                                        ),
+                                        icon=ft.icons.UPDATE_ROUNDED
+                                    ),
+                                ]
+                            )
+                        )
+                    ]
+                )
+            )
+        )
 
     #  --------------------// functions to get the actual dates here---------//
     def change_date(self, e):
@@ -117,7 +237,6 @@ class EventsPage(ft.UserControl):
     #  --------------// getting the actual date----------//
     def get_current_date(self, e):
         self.current_date = self.date_picker.value
-        print(self.current_date)
 
     #  --------------------// function to validate the input fields here---------//
     def validate_inputs_func(self, e):
@@ -195,8 +314,18 @@ class EventsPage(ft.UserControl):
             self.page.snack_bar.open = True
             self.page.update()
 
+    #  -------------------// functions for the modals here-------------//
+    def trigger_events_update_modal(self, e):
+        try:
+            self.page.dialog = self.events_update_modal
+            self.events_update_modal.open = True
+            self.page.update()
+        except Exception as ex:
+            print(ex)
+
     def build(self):
         self.show_events_table()
+        self.show_contacts_table()
         return ft.ListView(
             expand=1,
             auto_scroll=True,
@@ -297,7 +426,6 @@ class EventsPage(ft.UserControl):
                                             )
                                         ),
                                         content=ft.Container(
-                                            margin=ft.margin.only(top=20),
                                             content=ft.Row(
                                                 alignment=ft.MainAxisAlignment.CENTER,
                                                 controls=[
@@ -313,10 +441,10 @@ class EventsPage(ft.UserControl):
                                             content=ft.Row(
                                                 controls=[
                                                     ft.Icon(
-                                                        ft.icons.BOOK_ROUNDED,
+                                                        ft.icons.CONTACT_MAIL_ROUNDED,
                                                     ),
                                                     ft.Text(
-                                                        "events".title(),
+                                                        "contacts".title(),
                                                         weight=ft.FontWeight.W_700
                                                     )
                                                 ]
@@ -327,7 +455,7 @@ class EventsPage(ft.UserControl):
                                             content=ft.Row(
                                                 alignment=ft.MainAxisAlignment.CENTER,
                                                 controls=[
-                                                    ft.Text("fire")
+                                                    self.contact_table
                                                 ]
                                             )
                                         ),
@@ -367,6 +495,52 @@ class EventsPage(ft.UserControl):
                                     ft.IconButton(
                                         data=single_record,
                                         icon=ft.icons.UPDATE_ROUNDED,
+                                        on_click=self.fill_text_boxes,
+                                        tooltip="update",
+                                        icon_color="#00B4C6",
+                                    ),
+                                    ft.IconButton(
+                                        data=single_record,
+                                        icon=ft.icons.DELETE_ROUNDED,
+                                        on_click=self.delete_event_func,
+                                        tooltip="delete",
+                                        icon_color="#f44336"
+                                    ),
+                                    #  ------------------deleting and updating the records-------//
+                                ]
+                            )
+                        ),
+
+                    ]
+                )
+            )
+
+    #  ----------------------// function to get all the contacts details here----//
+    def show_contacts_table(self):
+        sql = "SELECT * FROM contact"
+        self.database_cursor.execute(sql)
+        all_results = self.database_cursor.fetchall()
+        #  ----------pushing the data to the main table here----------------//
+        columns = [column[0] for column in self.database_cursor.description]
+        rows = [dict(zip(columns, row)) for row in all_results]
+        for single_record in rows:
+            self.contact_table.rows.append(
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text(single_record["first_name"])),
+                        ft.DataCell(ft.Text(single_record["last_name"])),
+                        ft.DataCell(ft.Text(single_record["email"][:10])),
+                        ft.DataCell(ft.Text(single_record["phone_number"])),
+                        ft.DataCell(ft.Text(single_record["event_name"])),
+                        ft.DataCell(ft.Text(single_record["ordering_number"])),
+                        ft.DataCell(ft.Text(single_record["message"])),
+                        #  --------------the delete and update controls------------//
+                        ft.DataCell(
+                            ft.Row(
+                                controls=[
+                                    ft.IconButton(
+                                        data=single_record,
+                                        icon=ft.icons.UPDATE_ROUNDED,
                                         on_click={},
                                         tooltip="update",
                                         icon_color="#00B4C6",
@@ -386,3 +560,112 @@ class EventsPage(ft.UserControl):
                     ]
                 )
             )
+
+    #  -----------------//-----------------------------------//
+    def fill_text_boxes(self, e):
+        """the function to prefill the text-boxes when the button is clicked here-------"""
+        try:
+            self.editDelete_id = e.control.data["event_id"]
+            self.event_name.value = e.control.data["event_name"]
+            self.date_time = e.control.data["date_time"]
+            self.location.value = e.control.data["location"]
+            self.description.value = e.control.data["description"]
+            self.agenda.value = e.control.data["agenda"]
+            self.page.dialog = self.events_update_modal
+            self.events_update_modal.open = True
+            self.page.update()
+        except Exception as ex:
+            self.page.snack_bar = ft.SnackBar(
+                bgcolor="red",
+                content=ft.Container(
+                    content=ft.Text(
+                        "something went wrong check your connection {}".format(ex).title(),
+                        color="white",
+                    )
+                ),
+                action="ok".title()
+            )
+            self.page.snack_bar.open = True
+            self.page.update()
+
+    #  -----------------// the function will be used to update the records-------//
+    def update_events_func(self, e):
+        """the function to update the records here"""
+        try:
+            #  ------// getting the time here-------//
+            events = Events(
+                self.event_name.value,
+                self.current_date,
+                self.location.value,
+                self.description.value,
+                self.agenda.value
+            )
+            events.update_event_func(self.editDelete_id)
+            self.show_events_table()
+            self.page.update()
+            self.page.snack_bar = ft.SnackBar(
+                bgcolor="#311B92",
+                content=ft.Container(
+                    content=ft.Text(
+                        "event details updated successfully".capitalize(),
+                        color="white",
+                    )
+                ),
+                action="ok".title()
+            )
+            self.page.snack_bar.open = True
+            self.events_update_modal.open = False
+            self.page.update()
+
+        except Exception as ex:
+            self.page.snack_bar = ft.SnackBar(
+                bgcolor="red",
+                content=ft.Container(
+                    content=ft.Text(
+                        "something went wrong check your connection {}".format(ex).title(),
+                        color="white",
+                    )
+                ),
+                action="ok".title()
+            )
+            self.page.snack_bar.open = True
+            self.page.update()
+
+    #  -------------------// function to delete the events here--------------//
+    def delete_event_func(self, e):
+        try:
+            #  ------// getting the time here-------//
+            events = Events(
+                self.event_name.value,
+                self.date_time,
+                self.location.value,
+                self.description.value,
+                self.agenda.value
+            )
+            events.delete_event_func(self.editDelete_id)
+            self.show_events_table()
+            self.page.snack_bar = ft.SnackBar(
+                bgcolor="#311B92",
+                content=ft.Container(
+                    content=ft.Text(
+                        "event details deleted successfully".capitalize(),
+                        color="white",
+                    )
+                ),
+                action="ok".title()
+            )
+            self.page.snack_bar.open = True
+            self.page.update()
+        except Exception as ex:
+            self.page.snack_bar = ft.SnackBar(
+                bgcolor="red",
+                content=ft.Container(
+                    content=ft.Text(
+                        "something went wrong check your connection {}".format(ex).title(),
+                        color="white",
+                    )
+                ),
+                action="ok".title()
+            )
+            self.page.snack_bar.open = True
+            self.page.update()

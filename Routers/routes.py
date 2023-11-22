@@ -5,7 +5,7 @@ from Views.payment_view import PaymentView
 from Views.streaming_view import StreamingView
 from Views.events_view import EventsView
 from Views.contact_us_view import ContactView
-from Views.credentials.login_view import LoginView
+from Views.credentials.login_view import LoginControl
 
 
 class Routers:
@@ -14,10 +14,10 @@ class Routers:
         self.page = page
         self.ft = ft
         self.routes = {
-            "/": LoginView(page),
+            "/": LoginControl(page),
             "/index": IndexView(page),
             "/account": AccountView(page),
-            "/payment": PaymentView(page),
+            "/tickets": PaymentView(page),
             "/events": EventsView(page),
             "/streams": StreamingView(page),
             "/contact": ContactView(page)

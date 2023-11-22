@@ -1,21 +1,20 @@
 import flet as ft
 
 
-def MainFooter(page):
-    content = ft.ListView(
-        controls=[
-            # -------------------// the main container for the footer here--------//
-            ft.Container(
-                height=600,
-                margin=0,
-                padding=0,
-                bgcolor="black",
-                content=ft.Column(
-                    controls=[
+class MainFooter(ft.UserControl):
+    def __init__(self, page: ft.Page):
+        super().__init__()
+        self.page = page
 
-                    ]
+    def build(self):
+        return ft.ListView(
+            controls=[
+                ft.Container(
+                    content=ft.Column(
+                        controls=[
+
+                        ]
+                    )
                 )
-            )
-        ]
-    )
-    return content
+            ]
+        )

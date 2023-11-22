@@ -113,14 +113,14 @@ def main(page: ft.Page):
                                 content=ft.Row(
                                     controls=[
                                         ft.Text(
-                                            "payments".title(),
+                                            "tickets".title(),
                                             color="white",
                                             size=15
                                         ),
 
                                     ]
                                 ),
-                                on_click=lambda _: page.go('/payment'),
+                                on_click=lambda _: page.go('/tickets'),
                             ),
                             ft.Divider(),
                             #  -------------the other controls here-------//
@@ -249,6 +249,7 @@ def main(page: ft.Page):
             controls=[
                 navigation_bar,
                 myRouter.body,
+                MainFooter(page=page)
             ]
         )
     )
