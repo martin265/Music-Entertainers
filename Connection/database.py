@@ -70,3 +70,27 @@ def create_table_payment_details():
     except Exception as ex:
         print(ex)
 
+
+def create_table_payment():
+    try:
+        database_cursor = my_connection.cursor()
+        sql = ("CREATE TABLE payment_details("
+               "payment_details_id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,"
+               "first_name VARCHAR(50) NOT NULL,"
+               "last_name VARCHAR(50) NOT NULL,"
+               "email VARCHAR(50) NOT NULL,"
+               "phone_number VARCHAR(50) NOT NULL,"
+               "event_name VARCHAR(50) NOT NULL,"
+               "ticket_type VARCHAR(50) NOT NULL,"
+               "amount VARCHAR(50) NOT NULL,"
+               "currency VARCHAR(50) NOT NULL,"
+               "source VARCHAR(50) NOT NULL,"
+               "cvv VARCHAR(50) NOT NULL,"
+               "xpr VARCHAR(50) NOT NULL,"
+               "added_date VARCHAR(50) NOT NULL)")
+        database_cursor.execute(sql)
+        my_connection.connect()
+        print("payment table created successfully".capitalize())
+    except Exception as ex:
+        print(ex)
+
