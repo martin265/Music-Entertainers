@@ -11,6 +11,8 @@ class EventsPage(ft.UserControl):
         self.current_date = ft.Text()
         self.database_cursor = my_connection.cursor()
         self.editDelete_id = ft.Text()
+
+        self.formatted_date = ft.Text()
         #  -------------// getting input details from the users--------------//
         self.event_name = ft.TextField(
             width=550,
@@ -88,7 +90,7 @@ class EventsPage(ft.UserControl):
             width=1200,
             horizontal_margin=10,
             sort_column_index=0,
-            height=400,
+            height=700,
             sort_ascending=True,
             column_spacing=5,
             bgcolor="white",
@@ -237,6 +239,11 @@ class EventsPage(ft.UserControl):
     #  --------------// getting the actual date----------//
     def get_current_date(self, e):
         self.current_date = self.date_picker.value
+        # Convert the string to a datetime object
+        date_object = datetime.datetime.strptime(f"{self.current_date}", "%Y-%m-%d %H:%M:%S")
+
+        # Format the datetime object as a string without the time portion
+        self.formatted_date = date_object.strftime("%Y-%m-%d")
 
     #  --------------------// function to validate the input fields here---------//
     def validate_inputs_func(self, e):
@@ -277,7 +284,7 @@ class EventsPage(ft.UserControl):
             #  ------// getting the time here-------//
             events = Events(
                 self.event_name.value,
-                self.current_date,
+                self.formatted_date,
                 self.location.value,
                 self.description.value,
                 self.agenda.value
@@ -426,6 +433,7 @@ class EventsPage(ft.UserControl):
                                             )
                                         ),
                                         content=ft.Container(
+                                            height=700,
                                             content=ft.Row(
                                                 alignment=ft.MainAxisAlignment.CENTER,
                                                 controls=[
@@ -466,6 +474,10 @@ class EventsPage(ft.UserControl):
                             )
                         ]
                     )
+                ),
+
+                ft.Container(
+                    height=300,
                 )
             ]
         )

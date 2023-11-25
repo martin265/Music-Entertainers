@@ -16,7 +16,6 @@ class Routers:
         self.routes = {
             "/": LoginControl(page),
             "/index": IndexView(page),
-            "/account": AccountView(page),
             "/tickets": PaymentView(page),
             "/events": EventsView(page),
             "/streams": StreamingView(page),

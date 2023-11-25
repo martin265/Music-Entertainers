@@ -93,20 +93,6 @@ def main(page: ft.Page):
                             ),
                             ft.Divider(),
                             #  -------------the other controls here-------//
-                            ft.Container(
-                                ink=False,
-                                content=ft.Row(
-                                    controls=[
-                                        ft.Text(
-                                            "profile".title(),
-                                            color="white",
-                                            size=15
-                                        )
-                                    ]
-                                ),
-                                on_click=lambda _: page.go('/account'),
-                            ),
-                            ft.Divider(),
                             #  -------------the other controls here-------//
                             ft.Container(
                                 ink=False,

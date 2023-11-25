@@ -183,10 +183,14 @@ class SetCalendar(ft.UserControl):
     #  ---------------//
     def get_all_events_func(self, e):
         current_date = e.control.data
-        #sql = ("SELECT event_name, location FROM events WHERE date_time=%s", current_date)
-        self.database_cursor.execute('SELECT * from events WHERE date_time = %s', current_date)
+        # Ensure that current_date is a tuple
+        current_date_tuple = (current_date,)
+
+        # Use a placeholder in the SQL query
+        self.database_cursor.execute('SELECT * FROM events WHERE date_time = %s', current_date_tuple)
+
         all_results = self.database_cursor.fetchall()
-        print(all_results)
+        print(all_results, current_date)
 
     #  ----------// the logic for the calendar here--------//
     def create_month_calendar(self, year):
