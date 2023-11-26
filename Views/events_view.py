@@ -114,7 +114,7 @@ class SetCalendar(ft.UserControl):
                                             f"{current_date}",
                                             weight=ft.FontWeight.W_700,
                                             color="#0050C1",
-                                            size=20,
+                                            size=30,
                                         )
                                     ]
                                 )
@@ -185,12 +185,155 @@ class SetCalendar(ft.UserControl):
         current_date = e.control.data
         # Ensure that current_date is a tuple
         current_date_tuple = (current_date,)
+        if current_date:
+            self.page.snack_bar = ft.SnackBar(
+                bgcolor="#0078D9",
+                content=ft.Container(
+                    height=50,
+                    content=ft.Column(
+                        controls=[
+                            ft.Text(
+                                f"{current_date}",
+                                size=20,
+                                color="white"
+                            ),
 
-        # Use a placeholder in the SQL query
-        self.database_cursor.execute('SELECT * FROM events WHERE date_time = %s', current_date_tuple)
+                            ft.Container(
+                                content=ft.Text(
+                                    "all registered events will show a pop up".capitalize(),
+                                    size=20,
+                                    color="white"
+                                )
+                            ),
+                            ft.Container(
+                                height=20
+                            )
+                        ]
+                    )
+                )
+            )
+            self.page.snack_bar.open = True
+            self.page.update()
+            # Use a placeholder in the SQL query
+            self.database_cursor.execute('SELECT * FROM events WHERE date_time = %s', current_date_tuple)
 
-        all_results = self.database_cursor.fetchall()
-        print(all_results, current_date)
+            all_results = self.database_cursor.fetchall()
+            columns = [column[0] for column in self.database_cursor.description]
+            rows = [dict(zip(columns, row)) for row in all_results]
+            for single_record in rows:
+                event_dialog = ft.AlertDialog(
+                    content=ft.Container(
+                        width=500,
+                        height=400,
+                        bgcolor="white",
+                        content=ft.Column(
+                            controls=[
+                                ft.Container(
+                                    margin=ft.margin.only(top=30),
+                                    content=ft.Row(
+                                        alignment=ft.MainAxisAlignment.CENTER,
+                                        controls=[
+                                            ft.Image(
+                                                src="assets/stickers/calendar.png",
+                                                height=150,
+                                                width=150
+                                            )
+                                        ]
+                                    )
+                                ),
+
+                                ft.Container(
+                                    content=ft.Row(
+                                        alignment=ft.MainAxisAlignment.CENTER,
+                                        controls=[
+                                            ft.Text(
+                                                "available event".capitalize()
+                                            )
+                                        ]
+                                    )
+                                ),
+
+                                ft.Container(
+                                    margin=ft.margin.only(left=30),
+                                    content=ft.Column(
+                                        controls=[
+                                            ft.Row(
+                                                controls=[
+                                                    ft.Text(
+                                                        "event name".title(),
+                                                        weight=ft.FontWeight.BOLD,
+                                                        size=20,
+                                                        color="#311B92"
+                                                    ),
+                                                    ft.Divider(height=10),
+                                                    ft.Text(
+                                                        f"{single_record['event_name']}".title(),
+                                                        color="#311B92",
+                                                        weight=ft.FontWeight.BOLD
+                                                    )
+
+                                                ]
+                                            )
+                                        ]
+                                    )
+                                ),
+                                ft.Container(
+                                    margin=ft.margin.only(left=30),
+                                    content=ft.Column(
+                                        controls=[
+                                            ft.Row(
+                                                controls=[
+                                                    ft.Text(
+                                                        "location".title(),
+                                                        weight=ft.FontWeight.BOLD,
+                                                        size=20,
+                                                        color="#311B92"
+                                                    ),
+                                                    ft.Divider(height=10),
+                                                    ft.Text(
+                                                        f"{single_record['location']}".title(),
+                                                        color="#311B92",
+                                                        weight=ft.FontWeight.BOLD
+                                                    )
+
+                                                ]
+                                            )
+                                        ]
+                                    )
+                                ),
+                                ft.Container(
+                                    margin=ft.margin.only(left=30),
+                                    content=ft.Column(
+                                        controls=[
+                                            ft.Row(
+                                                controls=[
+                                                    ft.Text(
+                                                        "agenda".title(),
+                                                        weight=ft.FontWeight.BOLD,
+                                                        size=20,
+                                                        color="#311B92"
+                                                    ),
+                                                    ft.Divider(height=10),
+                                                    ft.Text(
+                                                        f"{single_record['agenda']}".title(),
+                                                        color="#311B92",
+                                                        weight=ft.FontWeight.BOLD
+                                                    )
+
+                                                ]
+                                            )
+                                        ]
+                                    )
+                                )
+                            ]
+                        )
+                    )
+                )
+                self.page.dialog = event_dialog
+                event_dialog.open = True
+                self.page.update()
+        else:
+            print(current_date)
 
     #  ----------// the logic for the calendar here--------//
     def create_month_calendar(self, year):
