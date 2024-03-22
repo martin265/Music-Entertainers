@@ -14,8 +14,7 @@ class Routers:
         self.page = page
         self.ft = ft
         self.routes = {
-            "/": LoginControl(page),
-            "/index": IndexView(page),
+            "/": IndexView(page),
             "/tickets": PaymentView(page),
             "/events": EventsView(page),
             "/streams": StreamingView(page),

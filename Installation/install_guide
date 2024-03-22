@@ -1,5 +1,6 @@
 pip install flet
-pip install paypalrestsdk
 pip install stripe
 pip install requests
 pip install beautifulsoup4
+pip install reportlab
+pip install pillow

@@ -348,18 +348,34 @@ class ContactView(ft.UserControl):
                                     ]
                                 )
                             ),
-                            #  -------------------//-----------------------//
+                            #  //---------------------// footer //-----------------------//
                             ft.Container(
-                                margin=ft.margin.only(top=30, left=60),
                                 height=200,
-                                content=ft.Column(
+                                margin=ft.margin.only(top=40),
+                                gradient=ft.LinearGradient(
+                                    colors=[
+                                        "#0078D9",
+                                        "#311B92",
+                                    ],
+                                    begin=ft.alignment.bottom_left,
+                                    end=ft.alignment.top_left,
+                                ),
+                                content=ft.Row(
                                     controls=[
-                                        ft.Text(
-                                            "hello"
-                                        )
+
                                     ]
                                 )
-                            )
+                            ),
+
+                            #  //---------------------// footer //-----------------------//
+                            ft.Container(
+                                height=10,
+                                content=ft.Row(
+                                    controls=[
+
+                                    ]
+                                )
+                            ),
                         ]
 
                     )

@@ -61,6 +61,7 @@ class CalculateTicketPrices(ft.UserControl):
         super().__init__()
         self.page = page
         self.database_cursor = my_connection.cursor()
+        self.total_amount = ft.Text()
 
     def calculate_tickets(self):
         try:
@@ -74,11 +75,7 @@ class CalculateTicketPrices(ft.UserControl):
             amounts = [float(result[0]) for result in all_results if result[0].replace('.', '').isdigit()]
 
             # Calculate the total
-            total_amount = sum(amounts)
-
-            print("Total Amount:", total_amount)
-
-
+            self.total_amount = sum(amounts)
         except Exception as ex:
             print(ex)
 
@@ -181,6 +178,14 @@ class Payments(ft.UserControl):
         self.payments_calculations = CalculateTicketPrices(page=page)
         self.payments_calculations.calculate_tickets()
 
+        #  -----------------------// getting the diamond total amount here //----------------------//
+        self.diamond_tickets = CalculateDiamondPrices(page=page)
+        self.diamond_tickets.calculate_diamond_tickets()
+
+        #  -------------------// getting the silver total amount here //-------------------------//
+        self.silver_tickets = CalculateSilverPrices(page=page)
+        self.silver_tickets.calculate_silver_tickets()
+
     def build(self):
         return ft.ListView(
             expand=1,
@@ -275,7 +280,10 @@ class Payments(ft.UserControl):
                                             content=ft.Row(
                                                 alignment=ft.MainAxisAlignment.CENTER,
                                                 controls=[
-
+                                                    ft.Text(
+                                                        f"{self.diamond_tickets.total_amount}",
+                                                        size=200
+                                                    )
                                                 ]
                                             )
                                         ),
@@ -300,7 +308,10 @@ class Payments(ft.UserControl):
                                             content=ft.Row(
                                                 alignment=ft.MainAxisAlignment.CENTER,
                                                 controls=[
-
+                                                    ft.Text(
+                                                        f"{self.payments_calculations.total_amount}",
+                                                        size=200
+                                                    )
                                                 ]
                                             )
                                         ),
@@ -325,7 +336,10 @@ class Payments(ft.UserControl):
                                             content=ft.Row(
                                                 alignment=ft.MainAxisAlignment.CENTER,
                                                 controls=[
-
+                                                    ft.Text(
+                                                        f"{self.silver_tickets.total_amount}",
+                                                        size=200
+                                                    )
                                                 ]
                                             )
                                         ),

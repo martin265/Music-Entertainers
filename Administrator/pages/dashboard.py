@@ -1,10 +1,74 @@
 import flet as ft
+from Connection.database import my_connection
+
+
+class EventsTable(ft.UserControl):
+    def __init__(self, page: ft.Page):
+        super().__init__()
+        self.page = page
+        self.database_cursor = my_connection.cursor()
+
+        self.events_table = ft.DataTable(
+            width=1200,
+            horizontal_margin=10,
+            sort_column_index=0,
+            height=500,
+            sort_ascending=True,
+            column_spacing=5,
+            bgcolor="white",
+            heading_text_style=ft.TextStyle(
+                size=15,
+                weight=ft.FontWeight.BOLD,
+                color="#311B92",
+            ),
+            border_radius=ft.border_radius.all(10),
+            border=ft.border.all(1, "#f5f5f5"),
+            columns=[
+                ft.DataColumn(ft.Text("event name".capitalize())),
+                ft.DataColumn(ft.Text("date".capitalize())),
+                ft.DataColumn(ft.Text("location".capitalize())),
+                ft.DataColumn(ft.Text("description".capitalize())),
+                ft.DataColumn(ft.Text("agenda".capitalize())),
+            ],
+            rows=[]
+        )
+
+        #  ----------------------// the table for the events will be here--------------//
+
+    def show_events_table(self):
+        sql = "SELECT * FROM events"
+        self.database_cursor.execute(sql)
+        all_results = self.database_cursor.fetchall()
+        #  ----------pushing the data to the main table here----------------//
+        columns = [column[0] for column in self.database_cursor.description]
+        rows = [dict(zip(columns, row)) for row in all_results]
+
+        for single_record in rows:
+            self.events_table.rows.append(
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text(single_record["event_name"])),
+                        ft.DataCell(ft.Text(single_record["date_time"])),
+                        ft.DataCell(ft.Text(single_record["location"][:10])),
+                        ft.DataCell(ft.Text(single_record["description"])),
+                        ft.DataCell(ft.Text(single_record["agenda"])),
+                        #  --------------the delete and update controls------------//
+                    ]
+                )
+            )
+
+    def build(self):
+        return ft.ListView()
 
 
 class MainDashboard(ft.UserControl):
     def __init__(self, page: ft.Page):
         super().__init__()
         self.page = page
+
+        # ---------------------// the events table here //-------------------//
+        self.events_table = EventsTable(page=page)
+        self.events_table.show_events_table()
 
     def build(self):
         return ft.ListView(
@@ -262,6 +326,29 @@ class MainDashboard(ft.UserControl):
                             )
                         ]
                     )
+                ),
+
+                ft.Container(
+                    bgcolor="#eceff1",
+                    border_radius=ft.border_radius.all(10),
+                    margin=ft.margin.only(top=10),
+                    content=ft.Row(
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        controls=[
+                            ft.Container(
+                                margin=ft.margin.only(top=30, bottom=30),
+                                content=ft.Row(
+                                    controls=[
+                                        self.events_table.events_table
+                                    ]
+                                )
+                            )
+                        ]
+                    )
+                ),
+
+                ft.Container(
+                    height=100
                 )
             ]
         )

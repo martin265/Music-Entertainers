@@ -93,4 +93,3 @@ def create_table_payment():
         print("payment table created successfully".capitalize())
     except Exception as ex:
         print(ex)
-

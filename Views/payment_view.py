@@ -7,6 +7,314 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
+from Connection.database import my_connection
+from flet_multi_page import subPage
+import json
+
+
+class RegisterClass(ft.UserControl):
+    def __init__(self, page: ft.Page):
+        super().__init__()
+        self.page = page
+
+        self.email = ft.TextField(
+            width=450,
+            height=100,
+            autocorrect=True,
+            autofocus=True,
+            enable_suggestions=True,
+            prefix_icon=ft.icons.PERSON_2_ROUNDED,
+            prefix_style=ft.TextStyle(
+                color="#311B92",
+
+            ),
+            helper_text="characters only",
+            helper_style=ft.TextStyle(
+                color="#311B92"
+            ),
+            border_color="#0D47A1",
+            label="email".capitalize(),
+            label_style=ft.TextStyle(
+                color="#311B92"
+            ),
+            capitalization=ft.TextCapitalization.WORDS,
+            focused_border_color="#0078D9",
+            keyboard_type=ft.KeyboardType.EMAIL,
+            color="#311B92",
+        )
+
+        #  ------------------// control for the password here //----------------//
+        self.password = ft.TextField(
+            width=450,
+            height=100,
+            autocorrect=True,
+            autofocus=True,
+            enable_suggestions=True,
+            prefix_icon=ft.icons.PASSWORD_ROUNDED,
+            prefix_style=ft.TextStyle(
+                color="#311B92",
+
+            ),
+            helper_text="characters only",
+            helper_style=ft.TextStyle(
+                color="#311B92"
+            ),
+            border_color="#0D47A1",
+            label="password".capitalize(),
+            label_style=ft.TextStyle(
+                color="#311B92"
+            ),
+            capitalization=ft.TextCapitalization.WORDS,
+            focused_border_color="#0078D9",
+            keyboard_type=ft.KeyboardType.VISIBLE_PASSWORD,
+            color="#311B92",
+            can_reveal_password=True
+        )
+
+        self.register_modal = ft.AlertDialog(
+            content=ft.Container(
+                width=500,
+                height=500,
+                bgcolor="white",
+                border_radius=ft.border_radius.all(10),
+                content=ft.Column(
+                    controls=[
+                        ft.Container(
+                            margin=ft.margin.only(top=30),
+                            content=ft.Row(
+                                alignment=ft.MainAxisAlignment.CENTER,
+                                controls=[
+                                    ft.Image(
+                                        src="assets/stickers/user-profile.png",
+                                        height=150,
+                                        width=150,
+                                    )
+                                ]
+                            )
+                        ),
+                        ft.Row(
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            controls=[
+                                self.email
+                            ]
+                        ),
+                        ft.Row(
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            controls=[
+                                self.password
+                            ]
+                        ),
+
+                        ft.Container(
+                            margin=ft.margin.only(top=20),
+                            content=ft.Row(
+                                alignment=ft.MainAxisAlignment.CENTER,
+                                controls=[
+                                    ft.ElevatedButton(
+                                        width=200,
+                                        height=50,
+                                        on_click=self.validate_fields_func,
+                                        autofocus=True,
+                                        color="white",
+                                        bgcolor="#212121",
+                                        elevation=None,
+                                        icon=ft.icons.APP_REGISTRATION_ROUNDED,
+                                        text="register account".capitalize(),
+                                        tooltip="register".capitalize()
+                                    ),
+                                ]
+                            )
+                        )
+
+                    ]
+                )
+            )
+        )
+
+    def trigger_register_modal_func(self, e):
+        try:
+            self.page.dialog = self.register_modal
+            self.register_modal.open = True
+            self.page.update()
+        except Exception as ex:
+            print(ex)
+
+    def validate_fields_func(self, e):
+        try:
+            if not self.email.value:
+                self.email.error_text = "enter your email first".capitalize()
+                self.page.update()
+            #  ---------------// --------------------------//
+            elif not self.password.value:
+                self.password.error_text = "enter password".capitalize()
+                self.page.update()
+            else:
+                self.register_clients()
+        except Exception as ex:
+            print(ex)
+
+    #  --------------------// function to register new clients to the system---------//
+    def register_clients(self):
+        """the function will register new clients to the system"""
+        try:
+            with open('users.json', 'r') as file:
+                try:
+                    users = json.load(file)
+                except json.JSONDecodeError:
+                    # Handle the case where the file is empty or not valid JSON
+                    users = {}
+        except FileNotFoundError:
+            users = {}
+
+        if self.email in users:
+            print("Username already exists. Please choose a different username.")
+        else:
+            users[self.email.value] = {'password': self.password.value}
+            with open('users.json', 'w') as file:
+                json.dump(users, file)
+            self.page.snack_bar = ft.SnackBar(
+                bgcolor="#0050C1",
+                content=ft.Container(
+                    content=ft.Row(
+                        controls=[
+                            ft.Text(
+                                "account created successfully".capitalize()
+                            )
+                        ]
+                    )
+                )
+            )
+            self.page.snack_bar.open = True
+            self.page.update()
+            self.page.dialog = self.register_modal
+            self.register_modal.open = False
+            self.page.update()
+
+    def build(self):
+        return ft.ListView()
+
+
+class LoginCredentials(ft.UserControl):
+    def __init__(self, page: ft.Page):
+        super().__init__()
+        self.page = page
+        self.email = ft.TextField(
+            width=480,
+            height=100,
+            autocorrect=True,
+            autofocus=True,
+            enable_suggestions=True,
+            prefix_icon=ft.icons.PERSON_2_ROUNDED,
+            prefix_style=ft.TextStyle(
+                color="#311B92",
+
+            ),
+            helper_text="characters only",
+            helper_style=ft.TextStyle(
+                color="#311B92"
+            ),
+            border_color="#0D47A1",
+            label="email".capitalize(),
+            label_style=ft.TextStyle(
+                color="#311B92"
+            ),
+            capitalization=ft.TextCapitalization.WORDS,
+            focused_border_color="#0078D9",
+            keyboard_type=ft.KeyboardType.EMAIL,
+            color="#311B92",
+        )
+
+        #  ------------------// control for the password here //----------------//
+        self.password = ft.TextField(
+            width=480,
+            height=100,
+            autocorrect=True,
+            autofocus=True,
+            enable_suggestions=True,
+            prefix_icon=ft.icons.PASSWORD_ROUNDED,
+            prefix_style=ft.TextStyle(
+                color="#311B92",
+
+            ),
+            helper_text="characters only",
+            helper_style=ft.TextStyle(
+                color="#311B92"
+            ),
+            border_color="#0D47A1",
+            label="password".capitalize(),
+            label_style=ft.TextStyle(
+                color="#311B92"
+            ),
+            capitalization=ft.TextCapitalization.WORDS,
+            focused_border_color="#0078D9",
+            keyboard_type=ft.KeyboardType.VISIBLE_PASSWORD,
+            color="#311B92",
+            can_reveal_password=True
+        )
+
+    def validate_fields_func(self, e):
+        try:
+            if not self.email.value:
+                self.email.error_text = "enter your email first".capitalize()
+                self.page.update()
+            #  ---------------// --------------------------//
+            elif not self.password.value:
+                self.password.error_text = "enter password".capitalize()
+                self.page.update()
+            else:
+                self.login_credentials_func()
+        except Exception as ex:
+            print(ex)
+
+    def login_credentials_func(self):
+        try:
+            with open('users.json', 'r') as file:
+                try:
+                    users = json.load(file)
+                except json.JSONDecodeError:
+                    # Handle the case where the file is empty or not valid JSON
+                    users = {}
+        except FileNotFoundError:
+            print("No registered users. Please register first.")
+            return
+
+        if self.email.value in users and users[self.email.value]['password'] == self.password.value:
+            self.page.snack_bar = ft.SnackBar(
+                bgcolor="#0050C1",
+                content=ft.Container(
+                    content=ft.Row(
+                        controls=[
+                            ft.Text(
+                                "logged in successfully".capitalize()
+                            )
+                        ]
+                    )
+                )
+            )
+            self.page.snack_bar.open = True
+            self.page.update()
+            self.page.go("/index")
+            self.page.update()
+        else:
+            self.page.snack_bar = ft.SnackBar(
+                bgcolor="#C21F1D",
+                content=ft.Container(
+                    content=ft.Row(
+                        controls=[
+                            ft.Text(
+                                "invalid username or password".capitalize()
+                            )
+                        ]
+                    )
+                )
+            )
+            self.page.snack_bar.open = True
+            self.page.update()
+
+    def build(self):
+        return ft.ListView(
+
+        )
 
 
 class SendQrEmail(ft.UserControl):
@@ -716,6 +1024,26 @@ class PaymentView(ft.UserControl):
         except Exception as ex:
             print(ex)
 
+    def get_current_event(self):
+        try:
+            sql = "SELECT event_name FROM events"
+            cursor = my_connection.cursor()
+            cursor.execute(sql)
+            all_results = cursor.fetchall()
+            #  ----------pushing the data to the main table here----------------//
+            columns = [column[0] for column in cursor.description]
+            rows = [dict(zip(columns, row)) for row in all_results]
+            #  ----------------looping through all the records here-------------//
+            for lecture_name in rows:
+                for keys in lecture_name.values():
+                    self.client_details.event_name.options.append(
+                        ft.dropdown.Option(
+                            keys
+                        )
+                    )
+        except Exception as ex:
+            print(ex)
+
     def InitialisePaymentDetails(self, e):
         try:
             if not self.client_details.first_name.value:
@@ -896,6 +1224,7 @@ class PaymentView(ft.UserControl):
 
     def build(self):
         self.getting_valid_image()
+        self.get_current_event()
         return ft.ListView(
             expand=1,
             auto_scroll=True,
@@ -1365,7 +1694,7 @@ class PaymentView(ft.UserControl):
                     height=10,
                     content=ft.Row(
                         controls=[
-                            
+
                         ]
                     )
                 ),

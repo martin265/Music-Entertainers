@@ -446,16 +446,26 @@ class StreamingView(ft.UserControl):
                             ),
                             #  ----------------------//-------------------//--------------//
                             ft.Container(
-                                height=400,
+                                height=200,
+                                margin=ft.margin.only(top=40),
                                 gradient=ft.LinearGradient(
                                     colors=[
-                                        "#4A148C",
-                                        "#4A4453"
+                                        "#0078D9",
+                                        "#311B92",
                                     ],
-                                    begin=ft.alignment.top_left,
-                                    end=ft.alignment.bottom_right
-
+                                    begin=ft.alignment.bottom_left,
+                                    end=ft.alignment.top_left,
                                 ),
+                                content=ft.Row(
+                                    controls=[
+
+                                    ]
+                                )
+                            ),
+
+                            #  //---------------------// footer //-----------------------//
+                            ft.Container(
+                                height=10,
                                 content=ft.Row(
                                     controls=[
 

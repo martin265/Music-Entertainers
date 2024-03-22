@@ -2,6 +2,7 @@ import flet as ft
 from Administrator.pages.dashboard import MainDashboard
 from Administrator.pages.events import EventsPage
 from Administrator.pages.payments import Payments
+from Administrator.pages.report import FinancialReports
 
 
 def main(page: ft.Page):
@@ -12,7 +13,8 @@ def main(page: ft.Page):
     all_pages = [
         MainDashboard(page=page),
         EventsPage(page=page),
-        Payments(page=page)
+        Payments(page=page),
+        FinancialReports(page=page)
     ]
 
     #  --------------function for transitioning the pages------------------//
@@ -113,6 +115,22 @@ def main(page: ft.Page):
                 ),
                 label_content=ft.Text(
                     "payment".capitalize(),
+                    style=ft.TextThemeStyle.BODY_MEDIUM,
+                    weight=ft.FontWeight.W_700,
+                    color="#212121"
+                )
+            ),
+
+            #  ------------// the destination for the events page here-----//
+            ft.NavigationRailDestination(
+                icon_content=ft.Icon(
+                    ft.icons.REPORT_ROUNDED,
+                    tooltip="reports".capitalize(),
+                    size=30,
+                    color="black"
+                ),
+                label_content=ft.Text(
+                    "report".capitalize(),
                     style=ft.TextThemeStyle.BODY_MEDIUM,
                     weight=ft.FontWeight.W_700,
                     color="#212121"
